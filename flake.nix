@@ -19,6 +19,7 @@
           tree-sitter
           nodejs
           nodePackages.typescript-language-server
+          clang
         ];
       };
     });
