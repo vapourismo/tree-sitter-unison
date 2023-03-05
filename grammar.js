@@ -81,7 +81,7 @@ module.exports = grammar({
 
     type_variable: $ => $.lowercase_identifier,
 
-    type_constructor: $ => prec(12, $.uppercase_qualified_identifier),
+    type_constructor: $ => $.uppercase_qualified_identifier,
 
     type_unit: _ => seq("(", ")"),
 

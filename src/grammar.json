@@ -240,12 +240,8 @@
       "name": "lowercase_identifier"
     },
     "type_constructor": {
-      "type": "PREC",
-      "value": 12,
-      "content": {
-        "type": "SYMBOL",
-        "name": "uppercase_qualified_identifier"
-      }
+      "type": "SYMBOL",
+      "name": "uppercase_qualified_identifier"
     },
     "type_unit": {
       "type": "SEQ",
