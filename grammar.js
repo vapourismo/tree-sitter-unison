@@ -19,41 +19,53 @@ module.exports = grammar({
   rules: {
     source_file: $ => repeat($._toplevel),
 
-    _toplevel: $ => choice(
-      $.use_statement,
-      $.declaration
-    ),
+    // Identifier, name, namespace
 
     uppercase_identifier: _ => /([A-Z]|\p{Emoji_Presentation})([A-Za-z0-9_!']|\p{Emoji_Presentation})*/,
 
-    lowercase_identifier: _ => /([a-z]|\p{Emoji_Presentation})([A-Za-z0-9_!']|\p{Emoji_Presentation})*/,
+    lowercase_identifier: _ => /[a-z]([A-Za-z0-9_!']|\p{Emoji_Presentation})*/,
 
     regular_identifier: _ => /([A-Za-z_]|\p{Emoji_Presentation})([A-Za-z0-9_!']|\p{Emoji_Presentation})*/,
 
     operator: _ => /[!$%^&*\-=+<>~\\/|:.]+/,
 
-    identifier: $ => choice($.regular_identifier, $.operator),
+    identifier: $ => choice(
+      $.regular_identifier,
+      $.operator
+    ),
+
+    namespace: $ => prec.left(11, seq(
+      optional(seq($.namespace, ".")),
+      $.regular_identifier
+    )),
 
     qualified_identifier: $ => seq(
-      repeat(seq($.regular_identifier, ".")),
+      optional(seq($.namespace, ".")),
       $.identifier,
     ),
 
     uppercase_qualified_identifier: $ => seq(
-      repeat(seq($.regular_identifier, ".")),
+      optional(seq($.namespace, ".")),
       $.uppercase_identifier,
     ),
 
     qualified_operator: $ => seq(
-      repeat(seq($.regular_identifier, ".")),
+      optional(seq($.namespace, ".")),
       $.operator,
+    ),
+
+    // Toplevel item
+
+    _toplevel: $ => choice(
+      $.use_statement,
+      $.declaration
     ),
 
     use_statement: $ => seq(
       $._start_mark,
       "use",
-      $.qualified_identifier,
-      repeat($.identifier),
+      field("namespace", $.qualified_identifier),
+      repeat(field("import", $.identifier)),
       $._end_mark
     ),
 
@@ -65,50 +77,76 @@ module.exports = grammar({
       $._end_mark
     ),
 
-    type_variable: $ => prec(1, $.lowercase_identifier),
+    // Type
 
-    type_constructor: $ => prec(2, $.uppercase_qualified_identifier),
+    type_variable: $ => $.lowercase_identifier,
+
+    type_constructor: $ => prec(12, $.uppercase_qualified_identifier),
 
     type_unit: _ => seq("(", ")"),
 
     type_operator: $ => seq(
       "(",
-      field("operator", $.qualified_operator),
+      $.qualified_operator,
       ")"
     ),
 
-    type: $ => seq(
-      optional($.forall_type),
-      $._type2
-    ),
-
-    forall_type: $ => seq("forall", repeat1($.lowercase_identifier), "."),
-
-    _type1: $ => repeat1(choice(
-      $.type_constructor,
-      $.type_variable,
-      $.type_unit,
-      $.type_operator,
-      seq("'", optional($.ability), $._type1),
-      seq("(", $._type_or_tuple_contents, ")"),
+    type_infix: $ => prec.right(1, seq(
+      field("left", $.type),
+      field("operator", $.qualified_operator),
+      optional(field("ability", $.type_ability)),
+      field("right", $.type)
     )),
 
-    _type_or_tuple_contents: $ => seq(
+    type_lazy: $ => seq(
+      "'",
+      optional(field("ability", $.type_ability)),
+      $.type
+    ),
+
+    type_parens: $ => seq(
+      "(",
       $.type,
-      repeat(seq(",", $.type))
+      ")"
     ),
 
-    _type2: $ => seq(
-      $._type1,
-      optional(seq($.qualified_operator, optional($.ability), $.type)
-      )
+    type_forall: $ => seq(
+      "forall",
+      repeat1(field("variable", $.lowercase_identifier)),
+      ".",
+      $.type
     ),
 
-    ability: $ => seq(
+    type_tuple: $ => seq(
+      "(",
+      $.type,
+      repeat1(seq(",", $.type)),
+      ")"
+    ),
+
+    type_apply: $ => prec.left(10, seq(
+      field("function", $.type),
+      field("parameter", $.type)
+    )),
+
+    type_ability: $ => seq(
       "{",
       $.type,
       repeat(seq(",", $.type)),
       "}"
-    )
+    ),
+
+    type: $ => choice(
+      $.type_forall,
+      $.type_infix,
+      $.type_constructor,
+      $.type_variable,
+      $.type_unit,
+      $.type_operator,
+      $.type_lazy,
+      $.type_tuple,
+      $.type_parens,
+      $.type_apply
+    ),
   }
 })
