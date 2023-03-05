@@ -15,5 +15,13 @@
   },
   "scripts": {
     "test": "tree-sitter test"
-  }
-}
+  },
+  "tree-sitter": [
+    {
+      "scope": "source.unison",
+      "file-types": [
+        "u"
+      ]
+    }
+  ]
+ }
