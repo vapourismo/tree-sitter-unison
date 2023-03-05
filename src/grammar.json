@@ -35,7 +35,7 @@
     },
     "operator": {
       "type": "PATTERN",
-      "value": "[!$%^&*\\-=+<>.~\\\\/|:]+"
+      "value": "[!$%^&*\\-=+<>~\\\\/|:.]+"
     },
     "identifier": {
       "type": "CHOICE",
@@ -72,6 +72,31 @@
         {
           "type": "SYMBOL",
           "name": "identifier"
+        }
+      ]
+    },
+    "uppercase_qualified_identifier": {
+      "type": "SEQ",
+      "members": [
+        {
+          "type": "REPEAT",
+          "content": {
+            "type": "SEQ",
+            "members": [
+              {
+                "type": "SYMBOL",
+                "name": "regular_identifier"
+              },
+              {
+                "type": "STRING",
+                "value": "."
+              }
+            ]
+          }
+        },
+        {
+          "type": "SYMBOL",
+          "name": "uppercase_identifier"
         }
       ]
     },
@@ -154,12 +179,20 @@
       ]
     },
     "type_variable": {
-      "type": "SYMBOL",
-      "name": "lowercase_identifier"
+      "type": "PREC",
+      "value": 1,
+      "content": {
+        "type": "SYMBOL",
+        "name": "lowercase_identifier"
+      }
     },
     "type_constructor": {
-      "type": "SYMBOL",
-      "name": "uppercase_identifier"
+      "type": "PREC",
+      "value": 2,
+      "content": {
+        "type": "SYMBOL",
+        "name": "uppercase_qualified_identifier"
+      }
     },
     "type_unit": {
       "type": "SEQ",
@@ -182,8 +215,12 @@
           "value": "("
         },
         {
-          "type": "SYMBOL",
-          "name": "qualified_operator"
+          "type": "FIELD",
+          "name": "operator",
+          "content": {
+            "type": "SYMBOL",
+            "name": "qualified_operator"
+          }
         },
         {
           "type": "STRING",
@@ -192,8 +229,45 @@
       ]
     },
     "type": {
-      "type": "SYMBOL",
-      "name": "_type2"
+      "type": "SEQ",
+      "members": [
+        {
+          "type": "CHOICE",
+          "members": [
+            {
+              "type": "SYMBOL",
+              "name": "forall_type"
+            },
+            {
+              "type": "BLANK"
+            }
+          ]
+        },
+        {
+          "type": "SYMBOL",
+          "name": "_type2"
+        }
+      ]
+    },
+    "forall_type": {
+      "type": "SEQ",
+      "members": [
+        {
+          "type": "STRING",
+          "value": "forall"
+        },
+        {
+          "type": "REPEAT1",
+          "content": {
+            "type": "SYMBOL",
+            "name": "lowercase_identifier"
+          }
+        },
+        {
+          "type": "STRING",
+          "value": "."
+        }
+      ]
     },
     "_type1": {
       "type": "REPEAT1",
@@ -202,11 +276,11 @@
         "members": [
           {
             "type": "SYMBOL",
-            "name": "type_variable"
+            "name": "type_constructor"
           },
           {
             "type": "SYMBOL",
-            "name": "type_constructor"
+            "name": "type_variable"
           },
           {
             "type": "SYMBOL",
@@ -287,18 +361,16 @@
       ]
     },
     "_type2": {
-      "type": "PREC_RIGHT",
-      "value": 2,
-      "content": {
-        "type": "SEQ",
-        "members": [
-          {
-            "type": "SYMBOL",
-            "name": "_type1"
-          },
-          {
-            "type": "REPEAT",
-            "content": {
+      "type": "SEQ",
+      "members": [
+        {
+          "type": "SYMBOL",
+          "name": "_type1"
+        },
+        {
+          "type": "CHOICE",
+          "members": [
+            {
               "type": "SEQ",
               "members": [
                 {
@@ -319,13 +391,16 @@
                 },
                 {
                   "type": "SYMBOL",
-                  "name": "_type1"
+                  "name": "type"
                 }
               ]
+            },
+            {
+              "type": "BLANK"
             }
-          }
-        ]
-      }
+          ]
+        }
+      ]
     },
     "ability": {
       "type": "SEQ",

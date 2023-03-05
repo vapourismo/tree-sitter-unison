@@ -30,13 +30,18 @@ module.exports = grammar({
 
     regular_identifier: _ => /([A-Za-z_]|\p{Emoji_Presentation})([A-Za-z0-9_!']|\p{Emoji_Presentation})*/,
 
-    operator: _ => /[!$%^&*\-=+<>.~\\/|:]+/,
+    operator: _ => /[!$%^&*\-=+<>~\\/|:.]+/,
 
     identifier: $ => choice($.regular_identifier, $.operator),
 
     qualified_identifier: $ => seq(
       repeat(seq($.regular_identifier, ".")),
       $.identifier,
+    ),
+
+    uppercase_qualified_identifier: $ => seq(
+      repeat(seq($.regular_identifier, ".")),
+      $.uppercase_identifier,
     ),
 
     qualified_operator: $ => seq(
@@ -60,23 +65,28 @@ module.exports = grammar({
       $._end_mark
     ),
 
-    type_variable: $ => $.lowercase_identifier,
+    type_variable: $ => prec(1, $.lowercase_identifier),
 
-    type_constructor: $ => $.uppercase_identifier,
+    type_constructor: $ => prec(2, $.uppercase_qualified_identifier),
 
     type_unit: _ => seq("(", ")"),
 
     type_operator: $ => seq(
       "(",
-      $.qualified_operator,
+      field("operator", $.qualified_operator),
       ")"
     ),
 
-    type: $ => $._type2,
+    type: $ => seq(
+      optional($.forall_type),
+      $._type2
+    ),
+
+    forall_type: $ => seq("forall", repeat1($.lowercase_identifier), "."),
 
     _type1: $ => repeat1(choice(
-      $.type_variable,
       $.type_constructor,
+      $.type_variable,
       $.type_unit,
       $.type_operator,
       seq("'", optional($.ability), $._type1),
@@ -88,10 +98,11 @@ module.exports = grammar({
       repeat(seq(",", $.type))
     ),
 
-    _type2: $ => prec.right(2, seq(
+    _type2: $ => seq(
       $._type1,
-      repeat(seq($.qualified_operator, optional($.ability), $._type1))
-    )),
+      optional(seq($.qualified_operator, optional($.ability), $.type)
+      )
+    ),
 
     ability: $ => seq(
       "{",
