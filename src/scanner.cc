@@ -26,8 +26,6 @@ struct Scanner {
       return after_newline(lexer, valid_symbols);
     }
 
-    int last_level = get_level();
-
     while (levels.size() > 0 && levels.front() > level) {
       levels.pop_front();
     }
