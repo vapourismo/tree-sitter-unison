@@ -1,10 +1,10 @@
 [package]
-name = "tree-sitter-Unison"
+name = "tree-sitter-unison"
 description = "Unison grammar for the tree-sitter parsing library"
 version = "0.0.1"
-keywords = ["incremental", "parsing", "Unison"]
+keywords = ["incremental", "parsing", "unison"]
 categories = ["parsing", "text-editors"]
-repository = "https://github.com/tree-sitter/tree-sitter-Unison"
+repository = "https://github.com/tree-sitter/tree-sitter-unison"
 edition = "2018"
 license = "MIT"
 
