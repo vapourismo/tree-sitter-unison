@@ -1,0 +1,153 @@
+{
+  "name": "unison",
+  "rules": {
+    "source_file": {
+      "type": "REPEAT",
+      "content": {
+        "type": "SYMBOL",
+        "name": "_toplevel"
+      }
+    },
+    "_toplevel": {
+      "type": "CHOICE",
+      "members": [
+        {
+          "type": "SYMBOL",
+          "name": "use_statement"
+        }
+      ]
+    },
+    "namespace": {
+      "type": "CHOICE",
+      "members": [
+        {
+          "type": "STRING",
+          "value": "Nat"
+        },
+        {
+          "type": "STRING",
+          "value": "Int"
+        }
+      ]
+    },
+    "regular_identifier": {
+      "type": "PATTERN",
+      "value": "([A-Za-z_]|\\p{Emoji_Presentation})([A-Za-z0-9_!']|\\p{Emoji_Presentation})*"
+    },
+    "operator": {
+      "type": "PATTERN",
+      "value": "[!$%^&*\\-=+<>.~\\\\/|:]+"
+    },
+    "identifier": {
+      "type": "CHOICE",
+      "members": [
+        {
+          "type": "SYMBOL",
+          "name": "regular_identifier"
+        },
+        {
+          "type": "SYMBOL",
+          "name": "operator"
+        }
+      ]
+    },
+    "qualified_identifier": {
+      "type": "SEQ",
+      "members": [
+        {
+          "type": "REPEAT",
+          "content": {
+            "type": "SEQ",
+            "members": [
+              {
+                "type": "SYMBOL",
+                "name": "regular_identifier"
+              },
+              {
+                "type": "STRING",
+                "value": "."
+              }
+            ]
+          }
+        },
+        {
+          "type": "SYMBOL",
+          "name": "identifier"
+        }
+      ]
+    },
+    "use_statement": {
+      "type": "SEQ",
+      "members": [
+        {
+          "type": "SYMBOL",
+          "name": "_start_mark"
+        },
+        {
+          "type": "STRING",
+          "value": "use"
+        },
+        {
+          "type": "SYMBOL",
+          "name": "qualified_identifier"
+        },
+        {
+          "type": "REPEAT",
+          "content": {
+            "type": "SYMBOL",
+            "name": "identifier"
+          }
+        },
+        {
+          "type": "SYMBOL",
+          "name": "_end_mark"
+        }
+      ]
+    }
+  },
+  "extras": [
+    {
+      "type": "STRING",
+      "value": " "
+    },
+    {
+      "type": "STRING",
+      "value": "\t"
+    },
+    {
+      "type": "STRING",
+      "value": "\r"
+    },
+    {
+      "type": "STRING",
+      "value": "\u000b"
+    },
+    {
+      "type": "STRING",
+      "value": "\f"
+    },
+    {
+      "type": "SYMBOL",
+      "name": "_newline"
+    }
+  ],
+  "conflicts": [],
+  "precedences": [],
+  "externals": [
+    {
+      "type": "SYMBOL",
+      "name": "_start_mark"
+    },
+    {
+      "type": "SYMBOL",
+      "name": "_end_mark"
+    },
+    {
+      "type": "SYMBOL",
+      "name": "_newline"
+    }
+  ],
+  "inline": [],
+  "supertypes": []
+}
+
