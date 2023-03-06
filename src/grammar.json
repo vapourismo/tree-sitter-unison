@@ -8,17 +8,86 @@
         "name": "_toplevel"
       }
     },
+    "_identifier_suffix_char": {
+      "type": "CHOICE",
+      "members": [
+        {
+          "type": "IMMEDIATE_TOKEN",
+          "content": {
+            "type": "PATTERN",
+            "value": "[A-Za-z0-9_!']"
+          }
+        },
+        {
+          "type": "IMMEDIATE_TOKEN",
+          "content": {
+            "type": "PATTERN",
+            "value": "\\p{Emoji_Presentation}"
+          }
+        }
+      ]
+    },
     "uppercase_identifier": {
-      "type": "PATTERN",
-      "value": "([A-Z]|\\p{Emoji_Presentation})([A-Za-z0-9_!']|\\p{Emoji_Presentation})*"
+      "type": "PREC_RIGHT",
+      "value": 0,
+      "content": {
+        "type": "SEQ",
+        "members": [
+          {
+            "type": "CHOICE",
+            "members": [
+              {
+                "type": "PATTERN",
+                "value": "[A-Z]"
+              },
+              {
+                "type": "PATTERN",
+                "value": "\\p{Emoji_Presentation}"
+              }
+            ]
+          },
+          {
+            "type": "REPEAT",
+            "content": {
+              "type": "SYMBOL",
+              "name": "_identifier_suffix_char"
+            }
+          }
+        ]
+      }
     },
     "lowercase_identifier": {
-      "type": "PATTERN",
-      "value": "[a-z]([A-Za-z0-9_!']|\\p{Emoji_Presentation})*"
+      "type": "PREC_RIGHT",
+      "value": 0,
+      "content": {
+        "type": "SEQ",
+        "members": [
+          {
+            "type": "PATTERN",
+            "value": "[a-z]"
+          },
+          {
+            "type": "REPEAT",
+            "content": {
+              "type": "SYMBOL",
+              "name": "_identifier_suffix_char"
+            }
+          }
+        ]
+      }
     },
     "regular_identifier": {
-      "type": "PATTERN",
-      "value": "([A-Za-z_]|\\p{Emoji_Presentation})([A-Za-z0-9_!']|\\p{Emoji_Presentation})*"
+      "type": "CHOICE",
+      "members": [
+        {
+          "type": "SYMBOL",
+          "name": "uppercase_identifier"
+        },
+        {
+          "type": "SYMBOL",
+          "name": "lowercase_identifier"
+        }
+      ]
     },
     "operator": {
       "type": "PATTERN",
@@ -382,7 +451,7 @@
             "name": "variable",
             "content": {
               "type": "SYMBOL",
-              "name": "lowercase_identifier"
+              "name": "type_variable"
             }
           }
         },

@@ -21,11 +21,25 @@ module.exports = grammar({
 
     // Identifier, name, namespace
 
-    uppercase_identifier: _ => /([A-Z]|\p{Emoji_Presentation})([A-Za-z0-9_!']|\p{Emoji_Presentation})*/,
+    _identifier_suffix_char: $ => choice(
+      token.immediate(/[A-Za-z0-9_!']/),
+      token.immediate(/\p{Emoji_Presentation}/)
+    ),
 
-    lowercase_identifier: _ => /[a-z]([A-Za-z0-9_!']|\p{Emoji_Presentation})*/,
+    uppercase_identifier: $ => prec.right(seq(
+      choice(/[A-Z]/, /\p{Emoji_Presentation}/),
+      repeat($._identifier_suffix_char)
+    )),
 
-    regular_identifier: _ => /([A-Za-z_]|\p{Emoji_Presentation})([A-Za-z0-9_!']|\p{Emoji_Presentation})*/,
+    lowercase_identifier: $ => prec.right(seq(
+      /[a-z]/,
+      repeat($._identifier_suffix_char)
+    )),
+
+    regular_identifier: $ => choice(
+      $.uppercase_identifier,
+      $.lowercase_identifier
+    ),
 
     operator: _ => /[!$%^&*\-=+<>~\\/|:.]+/,
 
@@ -112,7 +126,7 @@ module.exports = grammar({
 
     type_forall: $ => seq(
       "forall",
-      repeat1(field("variable", $.lowercase_identifier)),
+      repeat1(field("variable", $.type_variable)),
       ".",
       $.type
     ),
