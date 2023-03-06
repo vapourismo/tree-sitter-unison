@@ -125,7 +125,7 @@ module.exports = grammar({
     ),
 
     type_forall: $ => seq(
-      "forall",
+      choice("forall", "∀"),
       repeat1(field("variable", $.type_variable)),
       ".",
       $.type

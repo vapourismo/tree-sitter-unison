@@ -14,13 +14,13 @@
 (type_unit) @type
 
 (type_forall
-  "forall" @keyword
+  ["forall" "∀"] @keyword
   "." @keyword.operator)
 
 (type_lazy
   "'" @keyword.operator)
 
 (type_infix
-  operator: 
+  operator:
     (qualified_operator
       (operator) @operator))
