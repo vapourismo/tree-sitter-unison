@@ -38,26 +38,20 @@ struct Scanner {
         (level <= marked.front() || lexer->eof(lexer))) {
       marked.pop_front();
       lexer->result_symbol = END_MARK;
-    //   puts("+ end_mark");
       return true;
     }
 
     lexer->result_symbol = NEWLINE;
-    // puts("+ newline");
     return true;
   }
 
   bool scan(TSLexer *lexer, const bool *valid_symbols) {
-    // printf("> scan(%i, %i, %i): '%c'\n", valid_symbols[START_MARK],
-           // valid_symbols[END_MARK], valid_symbols[NEWLINE], lexer->lookahead);
-
     if (valid_symbols[START_MARK] && !lexer->eof(lexer)) {
       int level = get_level();
       if (marked.empty() || (!marked.empty() && marked.front() < level)) {
         marked.push_front(level);
       }
       lexer->result_symbol = START_MARK;
-    //   puts("+ start_mark");
       return true;
     }
 
