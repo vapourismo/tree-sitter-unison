@@ -7,7 +7,9 @@
 (declaration
   ":" @keyword.operator)
 
-(type_constructor) @type
+(type_constructor
+  (uppercase_qualified_identifier
+    subject: (uppercase_identifier) @type))
 
 (type_unit) @type
 

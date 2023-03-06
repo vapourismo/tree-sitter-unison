@@ -150,8 +150,12 @@
               "type": "SEQ",
               "members": [
                 {
-                  "type": "SYMBOL",
-                  "name": "namespace"
+                  "type": "FIELD",
+                  "name": "namespace",
+                  "content": {
+                    "type": "SYMBOL",
+                    "name": "namespace"
+                  }
                 },
                 {
                   "type": "STRING",
@@ -165,8 +169,12 @@
           ]
         },
         {
-          "type": "SYMBOL",
-          "name": "identifier"
+          "type": "FIELD",
+          "name": "subject",
+          "content": {
+            "type": "SYMBOL",
+            "name": "identifier"
+          }
         }
       ]
     },
@@ -180,8 +188,12 @@
               "type": "SEQ",
               "members": [
                 {
-                  "type": "SYMBOL",
-                  "name": "namespace"
+                  "type": "FIELD",
+                  "name": "namespace",
+                  "content": {
+                    "type": "SYMBOL",
+                    "name": "namespace"
+                  }
                 },
                 {
                   "type": "STRING",
@@ -195,8 +207,12 @@
           ]
         },
         {
-          "type": "SYMBOL",
-          "name": "uppercase_identifier"
+          "type": "FIELD",
+          "name": "subject",
+          "content": {
+            "type": "SYMBOL",
+            "name": "uppercase_identifier"
+          }
         }
       ]
     },
@@ -210,8 +226,12 @@
               "type": "SEQ",
               "members": [
                 {
-                  "type": "SYMBOL",
-                  "name": "namespace"
+                  "type": "FIELD",
+                  "name": "namespace",
+                  "content": {
+                    "type": "SYMBOL",
+                    "name": "namespace"
+                  }
                 },
                 {
                   "type": "STRING",
@@ -225,8 +245,12 @@
           ]
         },
         {
-          "type": "SYMBOL",
-          "name": "operator"
+          "type": "FIELD",
+          "name": "subject",
+          "content": {
+            "type": "SYMBOL",
+            "name": "operator"
+          }
         }
       ]
     },

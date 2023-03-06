@@ -54,18 +54,18 @@ module.exports = grammar({
     )),
 
     qualified_identifier: $ => seq(
-      optional(seq($.namespace, ".")),
-      $.identifier,
+      optional(seq(field("namespace", $.namespace), ".")),
+      field("subject", $.identifier),
     ),
 
     uppercase_qualified_identifier: $ => seq(
-      optional(seq($.namespace, ".")),
-      $.uppercase_identifier,
+      optional(seq(field("namespace", $.namespace), ".")),
+      field("subject", $.uppercase_identifier),
     ),
 
     qualified_operator: $ => seq(
-      optional(seq($.namespace, ".")),
-      $.operator,
+      optional(seq(field("namespace", $.namespace), ".")),
+      field("subject", $.operator),
     ),
 
     // Toplevel item
