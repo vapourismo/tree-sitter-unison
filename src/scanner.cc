@@ -55,6 +55,12 @@ struct Scanner {
       return true;
     }
 
+    if (valid_symbols[END_MARK] && !marked.empty() && lexer->eof(lexer)) {
+      marked.pop_front();
+      lexer->result_symbol = END_MARK;
+      return true;
+    }
+
     // Trim whitespace
     while ((lexer->lookahead == ' ' || lexer->lookahead == '\t') &&
            !lexer->eof(lexer)) {
