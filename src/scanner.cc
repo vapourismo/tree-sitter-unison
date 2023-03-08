@@ -69,6 +69,17 @@ struct Scanner {
     // We should always be able to produce a NEWLINE token as backup.
     assert(valid_symbols[NEWLINE]);
 
+    // Trim whitespace
+    clear_whitespace(lexer);
+
+    // If we've reached the EOF and there are still unterminated blocks, we will
+    // mark the end of them here.
+    if (valid_symbols[END_MARK] && !marked.empty() && lexer->eof(lexer)) {
+      marked.pop_front();
+      lexer->result_symbol = END_MARK;
+      return true;
+    }
+
     if (valid_symbols[START_MARK] && !lexer->eof(lexer)) {
       int level = get_level();
       if (marked.empty() || (!marked.empty() && marked.front() < level)) {
@@ -77,15 +88,6 @@ struct Scanner {
       lexer->result_symbol = START_MARK;
       return true;
     }
-
-    if (valid_symbols[END_MARK] && !marked.empty() && lexer->eof(lexer)) {
-      marked.pop_front();
-      lexer->result_symbol = END_MARK;
-      return true;
-    }
-
-    // Trim whitespace
-    clear_whitespace(lexer);
 
     if (lexer->lookahead == '\n' && !lexer->eof(lexer)) {
       lexer->advance(lexer, true);
