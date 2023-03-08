@@ -91,7 +91,7 @@ struct Scanner {
     printf("> scan(%i, %i)\n", valid_symbols[START_MARK],
            valid_symbols[END_MARK]);
 
-    if (outstanding_ends > 0) {
+    if (valid_symbols[END_MARK] && outstanding_ends > 0) {
       outstanding_ends--;
       lexer->result_symbol = END_MARK;
       return true;
