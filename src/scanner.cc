@@ -35,6 +35,7 @@ int clear_whitespace(TSLexer *lexer) {
 struct Scanner {
   std::list<int> levels;
   std::list<int> marked;
+  int outstanding_ends = 0;
 
   int get_level() { return levels.size() > 0 ? levels.front() : 0; }
 
@@ -46,11 +47,13 @@ struct Scanner {
       return after_newline(lexer, valid_symbols);
     }
 
-    while (levels.size() > 0 && levels.front() > level) {
+    printf("> level = %i -> %i\n", get_level(), level);
+
+    while (!levels.empty() && levels.front() > level) {
       levels.pop_front();
     }
 
-    if (levels.size() > 0 && levels.front() < level && level > 0) {
+    if ((levels.empty() || (!levels.empty() && levels.front() < level)) && level > 0) {
       levels.push_front(level);
     }
 
@@ -58,6 +61,22 @@ struct Scanner {
         (level <= marked.front() || lexer->eof(lexer))) {
       marked.pop_front();
       lexer->result_symbol = END_MARK;
+
+      while (!lexer->eof(lexer) && !marked.empty() && level <= marked.front()) {
+        marked.pop_front();
+        outstanding_ends++;
+      }
+      
+      return true;
+    }
+
+    printf("> tmp: marked=%i marked_level=%i eof=%i\n", marked.size(),
+           marked.empty() ? 0 : marked.front(), lexer->eof(lexer));
+
+    if (valid_symbols[START_MARK] && !lexer->eof(lexer)) {
+      int level = get_level();
+      marked.push_front(level);
+      lexer->result_symbol = START_MARK;
       return true;
     }
 
@@ -69,6 +88,15 @@ struct Scanner {
     // We should always be able to produce a NEWLINE token as backup.
     assert(valid_symbols[NEWLINE]);
 
+    printf("> scan(%i, %i)\n", valid_symbols[START_MARK],
+           valid_symbols[END_MARK]);
+
+    if (outstanding_ends > 0) {
+      outstanding_ends--;
+      lexer->result_symbol = END_MARK;
+      return true;
+    }
+  
     // Trim whitespace
     clear_whitespace(lexer);
 
@@ -80,18 +108,16 @@ struct Scanner {
       return true;
     }
 
-    if (valid_symbols[START_MARK] && !lexer->eof(lexer)) {
-      int level = get_level();
-      if (marked.empty() || (!marked.empty() && marked.front() < level)) {
-        marked.push_front(level);
-      }
-      lexer->result_symbol = START_MARK;
-      return true;
-    }
-
     if (lexer->lookahead == '\n' && !lexer->eof(lexer)) {
       lexer->advance(lexer, true);
       return after_newline(lexer, valid_symbols);
+    }
+
+    if (valid_symbols[START_MARK] && !lexer->eof(lexer)) {
+      int level = get_level();
+      marked.push_front(level);
+      lexer->result_symbol = START_MARK;
+      return true;
     }
 
     return false;
@@ -116,6 +142,10 @@ void tree_sitter_unison_external_scanner_deserialize(void *payload,
 
 bool tree_sitter_unison_external_scanner_scan(void *payload, TSLexer *lexer,
                                               const bool *valid_symbols) {
-  return static_cast<Scanner *>(payload)->scan(lexer, valid_symbols);
+  bool r = static_cast<Scanner *>(payload)->scan(lexer, valid_symbols);
+  if (r) {
+    printf("> result: %i\n", lexer->result_symbol);
+  }
+  return r;
 }
 }

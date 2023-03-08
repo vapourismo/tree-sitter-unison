@@ -72,7 +72,8 @@ module.exports = grammar({
 
     _toplevel: $ => choice(
       $.use_statement,
-      $.declaration
+      $.declaration,
+      $.definition
     ),
 
     use_statement: $ => seq(
@@ -91,6 +92,32 @@ module.exports = grammar({
       $._end_mark
     ),
 
+    definition: $ => seq(
+      $._start_mark,
+      field("name", $.qualified_identifier),
+      repeat(field("parameter", $.regular_identifier)),
+      "=",
+      $.block,
+      $._end_mark
+    ),
+
+    // Term
+
+    statement: $ => choice(
+      $.use_statement,
+      $.expression
+    ),
+  
+    block: $ => seq(
+      repeat1($.expression),
+    ),
+
+    expression: $ => seq(
+      $._start_mark,
+      "foo_bar",
+      $._end_mark
+    ),
+    
     // Type
 
     type_variable: $ => $.lowercase_identifier,
