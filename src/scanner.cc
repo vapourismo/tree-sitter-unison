@@ -2,10 +2,35 @@ extern "C" {
 #include "tree_sitter/parser.h"
 }
 
-#include <list>
 #include <cassert>
+#include <list>
 
 enum Token { START_MARK, END_MARK, NEWLINE };
+
+bool is_whitespace(int32_t c) {
+  switch (c) {
+  case ' ':
+  case '\t':
+  case '\r':
+  case '\v':
+  case '\f':
+    return true;
+
+  default:
+    return false;
+  }
+}
+
+int clear_whitespace(TSLexer *lexer) {
+  int levels = 0;
+
+  while (!lexer->eof(lexer) && is_whitespace(lexer->lookahead)) {
+    lexer->advance(lexer, true);
+    levels++;
+  }
+
+  return levels;
+}
 
 struct Scanner {
   std::list<int> levels;
@@ -14,13 +39,7 @@ struct Scanner {
   int get_level() { return levels.size() > 0 ? levels.front() : 0; }
 
   bool after_newline(TSLexer *lexer, const bool *valid_symbols) {
-    int level = 0;
-
-    while ((lexer->lookahead == ' ' || lexer->lookahead == '\t') &&
-           !lexer->eof(lexer)) {
-      lexer->advance(lexer, true);
-      level++;
-    }
+    int level = clear_whitespace(lexer);
 
     if (lexer->lookahead == '\n') {
       lexer->advance(lexer, true);
@@ -66,10 +85,7 @@ struct Scanner {
     }
 
     // Trim whitespace
-    while ((lexer->lookahead == ' ' || lexer->lookahead == '\t') &&
-           !lexer->eof(lexer)) {
-      lexer->advance(lexer, true);
-    }
+    clear_whitespace(lexer);
 
     if (lexer->lookahead == '\n' && !lexer->eof(lexer)) {
       lexer->advance(lexer, true);
