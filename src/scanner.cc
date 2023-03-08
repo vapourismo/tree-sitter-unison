@@ -3,6 +3,7 @@ extern "C" {
 }
 
 #include <list>
+#include <cassert>
 
 enum Token { START_MARK, END_MARK, NEWLINE };
 
@@ -46,6 +47,9 @@ struct Scanner {
   }
 
   bool scan(TSLexer *lexer, const bool *valid_symbols) {
+    // We should always be able to produce a NEWLINE token as backup.
+    assert(valid_symbols[NEWLINE]);
+
     if (valid_symbols[START_MARK] && !lexer->eof(lexer)) {
       int level = get_level();
       if (marked.empty() || (!marked.empty() && marked.front() < level)) {
