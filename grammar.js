@@ -105,11 +105,13 @@ module.exports = grammar({
 
     statement: $ => choice(
       $.use_statement,
+      $.declaration,
+      $.definition,
       $.expression
     ),
   
     block: $ => seq(
-      repeat1($.expression),
+      repeat1($.statement)
     ),
 
     expression: $ => seq(

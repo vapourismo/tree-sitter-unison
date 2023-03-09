@@ -8,7 +8,7 @@
       "required": true,
       "types": [
         {
-          "type": "expression",
+          "type": "statement",
           "named": true
         }
       ]
@@ -202,6 +202,33 @@
         },
         {
           "type": "definition",
+          "named": true
+        },
+        {
+          "type": "use_statement",
+          "named": true
+        }
+      ]
+    }
+  },
+  {
+    "type": "statement",
+    "named": true,
+    "fields": {},
+    "children": {
+      "multiple": false,
+      "required": true,
+      "types": [
+        {
+          "type": "declaration",
+          "named": true
+        },
+        {
+          "type": "definition",
+          "named": true
+        },
+        {
+          "type": "expression",
           "named": true
         },
         {
