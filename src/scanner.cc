@@ -53,7 +53,8 @@ struct Scanner {
       levels.pop_front();
     }
 
-    if ((levels.empty() || (!levels.empty() && levels.front() < level)) && level > 0) {
+    if ((levels.empty() || (!levels.empty() && levels.front() < level)) &&
+        level > 0) {
       levels.push_front(level);
     }
 
@@ -66,14 +67,13 @@ struct Scanner {
         marked.pop_front();
         outstanding_ends++;
       }
-      
+
+      printf("> end: outstanding = %i, marked = %i\n", outstanding_ends, marked.size());
+
       return true;
     }
 
-    printf("> tmp: marked=%i marked_level=%i eof=%i\n", marked.size(),
-           marked.empty() ? 0 : marked.front(), lexer->eof(lexer));
-
-    if (valid_symbols[START_MARK] && !lexer->eof(lexer)) {
+    if (valid_symbols[START_MARK] && outstanding_ends < 1 && !lexer->eof(lexer)) {
       int level = get_level();
       marked.push_front(level);
       lexer->result_symbol = START_MARK;
@@ -96,7 +96,7 @@ struct Scanner {
       lexer->result_symbol = END_MARK;
       return true;
     }
-  
+
     // Trim whitespace
     clear_whitespace(lexer);
 
@@ -113,7 +113,7 @@ struct Scanner {
       return after_newline(lexer, valid_symbols);
     }
 
-    if (valid_symbols[START_MARK] && !lexer->eof(lexer)) {
+    if (valid_symbols[START_MARK] && outstanding_ends < 1 && !lexer->eof(lexer)) {
       int level = get_level();
       marked.push_front(level);
       lexer->result_symbol = START_MARK;

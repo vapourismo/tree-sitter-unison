@@ -394,14 +394,22 @@
       ]
     },
     "block": {
-      "type": "SEQ",
+      "type": "REPEAT1",
+      "content": {
+        "type": "SYMBOL",
+        "name": "statement"
+      }
+    },
+    "var": {
+      "type": "SYMBOL",
+      "name": "qualified_identifier"
+    },
+    "lit": {
+      "type": "CHOICE",
       "members": [
         {
-          "type": "REPEAT1",
-          "content": {
-            "type": "SYMBOL",
-            "name": "statement"
-          }
+          "type": "PATTERN",
+          "value": "\\d+"
         }
       ]
     },
@@ -413,8 +421,17 @@
           "name": "_start_mark"
         },
         {
-          "type": "STRING",
-          "value": "foo_bar"
+          "type": "CHOICE",
+          "members": [
+            {
+              "type": "SYMBOL",
+              "name": "var"
+            },
+            {
+              "type": "SYMBOL",
+              "name": "lit"
+            }
+          ]
         },
         {
           "type": "SYMBOL",

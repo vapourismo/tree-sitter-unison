@@ -109,17 +109,24 @@ module.exports = grammar({
       $.definition,
       $.expression
     ),
-  
-    block: $ => seq(
-      repeat1($.statement)
+
+    block: $ => repeat1($.statement),
+
+    var: $ => $.qualified_identifier,
+
+    lit: $ => choice(
+      /\d+/
     ),
 
     expression: $ => seq(
       $._start_mark,
-      "foo_bar",
+      choice(
+        $.var,
+        $.lit
+      ),
       $._end_mark
     ),
-    
+
     // Type
 
     type_variable: $ => $.lowercase_identifier,
