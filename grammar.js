@@ -26,14 +26,12 @@ module.exports = grammar({
       token.immediate(/\p{Emoji_Presentation}/)
     ),
 
-    uppercase_identifier: $ => prec.right(seq(
-      choice(/[A-Z]/, /\p{Emoji_Presentation}/),
-      repeat($._identifier_suffix_char)
-    )),
+    uppercase_identifier: _ => token(
+      /[\p{Lu}_\p{Emoji}][\p{L}\p{N}_\p{Emoji}!,\\']*|[-!$%^&*+=<>.~\\/|:]+/,
+    ),
 
-    lowercase_identifier: $ => prec.right(seq(
-      /[a-z]/,
-      repeat($._identifier_suffix_char)
+    lowercase_identifier: $ => token(choice(
+      /[\p{Ll}_\p{Emoji}][\p{L}\p{N}_\p{Emoji}!,\\']*|[-!$%^&*+=<>.~\\/|:]+/,
     )),
 
     regular_identifier: $ => choice(
@@ -41,7 +39,7 @@ module.exports = grammar({
       $.lowercase_identifier
     ),
 
-    operator: _ => /[!$%^&*\-=+<>~\\/|:.]+/,
+    operator: _ => token(/[!$%^&*\-=+<>~\\/|:.]+/),
 
     identifier: $ => choice(
       $.regular_identifier,

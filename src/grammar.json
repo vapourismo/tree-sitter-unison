@@ -28,50 +28,20 @@
       ]
     },
     "uppercase_identifier": {
-      "type": "PREC_RIGHT",
-      "value": 0,
+      "type": "TOKEN",
       "content": {
-        "type": "SEQ",
-        "members": [
-          {
-            "type": "CHOICE",
-            "members": [
-              {
-                "type": "PATTERN",
-                "value": "[A-Z]"
-              },
-              {
-                "type": "PATTERN",
-                "value": "\\p{Emoji_Presentation}"
-              }
-            ]
-          },
-          {
-            "type": "REPEAT",
-            "content": {
-              "type": "SYMBOL",
-              "name": "_identifier_suffix_char"
-            }
-          }
-        ]
+        "type": "PATTERN",
+        "value": "[\\p{Lu}_\\p{Emoji}][\\p{L}\\p{N}_\\p{Emoji}!,\\\\']*|[-!$%^&*+=<>.~\\\\/|:]+"
       }
     },
     "lowercase_identifier": {
-      "type": "PREC_RIGHT",
-      "value": 0,
+      "type": "TOKEN",
       "content": {
-        "type": "SEQ",
+        "type": "CHOICE",
         "members": [
           {
             "type": "PATTERN",
-            "value": "[a-z]"
-          },
-          {
-            "type": "REPEAT",
-            "content": {
-              "type": "SYMBOL",
-              "name": "_identifier_suffix_char"
-            }
+            "value": "[\\p{Ll}_\\p{Emoji}][\\p{L}\\p{N}_\\p{Emoji}!,\\\\']*|[-!$%^&*+=<>.~\\\\/|:]+"
           }
         ]
       }
@@ -90,8 +60,11 @@
       ]
     },
     "operator": {
-      "type": "PATTERN",
-      "value": "[!$%^&*\\-=+<>~\\\\/|:.]+"
+      "type": "TOKEN",
+      "content": {
+        "type": "PATTERN",
+        "value": "[!$%^&*\\-=+<>~\\\\/|:.]+"
+      }
     },
     "identifier": {
       "type": "CHOICE",

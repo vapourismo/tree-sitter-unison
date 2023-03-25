@@ -113,11 +113,6 @@
     "fields": {}
   },
   {
-    "type": "lowercase_identifier",
-    "named": true,
-    "fields": {}
-  },
-  {
     "type": "namespace",
     "named": true,
     "fields": {},
@@ -528,11 +523,6 @@
     }
   },
   {
-    "type": "uppercase_identifier",
-    "named": true,
-    "fields": {}
-  },
-  {
     "type": "uppercase_qualified_identifier",
     "named": true,
     "fields": {
@@ -632,7 +622,15 @@
     "named": false
   },
   {
+    "type": "lowercase_identifier",
+    "named": true
+  },
+  {
     "type": "operator",
+    "named": true
+  },
+  {
+    "type": "uppercase_identifier",
     "named": true
   },
   {
